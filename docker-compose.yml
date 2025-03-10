@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  hoarder-bookmark-sender:
+    build: .
+    container_name: hoarder-bookmark-sender
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      # Hoarder API
+      - HOARDER_API_KEY=${HOARDER_API_KEY}
+      - HOARDER_SERVER_URL=${HOARDER_SERVER_URL}
+      # Notification settings
+      - NOTIFICATION_METHOD=${NOTIFICATION_METHOD:-email}
+      - NOTIFICATION_FREQUENCY=${NOTIFICATION_FREQUENCY:-daily}
+      - BOOKMARKS_COUNT=${BOOKMARKS_COUNT:-3}
+      - SPECIFIC_LIST_ID=${SPECIFIC_LIST_ID}
+      # Email configuration
+      - EMAIL_SERVICE=${EMAIL_SERVICE}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - EMAIL_RECIPIENT=${EMAIL_RECIPIENT}
+      # Discord configuration
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}

@@ -12,10 +12,10 @@ RUN bun install --production
 COPY . .
 
 # Build TypeScript code
-RUN bun build ./src/index.ts --outdir ./dist
+RUN bun build ./src/index.ts --outdir ./dist --target=bun
 
 # Start the application
-CMD ["bun", "run", "dist/index.js"]
+CMD ["bun", "src/index.ts"]
 
 # Expose the port
 EXPOSE 8080

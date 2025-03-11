@@ -73,6 +73,8 @@ Edit the `.env` file with your configuration:
 - Set frequency (daily, weekly, monthly)
 - Configure notification-specific settings
 
+> If you need to change the server port mapping from `8080`, you can do that in the `docker-compose.yml` file.
+
 ### 3. Deploy with Docker Compose
 
 ```bash

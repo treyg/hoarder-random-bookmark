@@ -18,6 +18,9 @@ services:
       - NOTIFICATION_FREQUENCY=${NOTIFICATION_FREQUENCY:-daily}
       - BOOKMARKS_COUNT=${BOOKMARKS_COUNT:-3}
       - SPECIFIC_LIST_ID=${SPECIFIC_LIST_ID}
+      # Time zone configuration
+      - TIMEZONE=${TIMEZONE:-UTC}
+      - TIME_TO_SEND=${TIME_TO_SEND:-09:00}
       # Email configuration
       - EMAIL_SERVICE=${EMAIL_SERVICE}
       - EMAIL_USER=${EMAIL_USER}

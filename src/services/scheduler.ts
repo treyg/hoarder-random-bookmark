@@ -4,11 +4,34 @@ import { getRandomBookmarks } from '../api/hoarder'
 import { sendBookmarksEmail } from './email'
 import { sendBookmarksDiscord } from './discord'
 
+// Function to convert time string (HH:MM) to cron time format (MM HH)
+function timeToCron(timeString: string): { minute: string; hour: string } {
+  // Default to 9:00 AM if format is invalid
+  const defaultTime = { minute: '0', hour: '9' }
+  
+  // Validate time format (HH:MM in 24-hour format)
+  const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/
+  const match = timeString.match(timeRegex)
+  
+  if (!match) {
+    console.warn(`Invalid time format: ${timeString}, using default 09:00`)
+    return defaultTime
+  }
+  
+  return {
+    minute: match[2],
+    hour: match[1].padStart(2, '0')
+  }
+}
+
+// Get time components from config
+const { minute, hour } = timeToCron(config.TIME_TO_SEND)
+
 // Define cron expressions for different frequencies
 const cronExpressions = {
-  daily: '0 9 * * *', // Every day at 9 AM
-  weekly: '0 9 * * 1', // Every Monday at 9 AM
-  monthly: '0 9 1 * *' // First day of every month at 9 AM
+  daily: `${minute} ${hour} * * *`, // Every day at configured time
+  weekly: `${minute} ${hour} * * 1`, // Every Monday at configured time
+  monthly: `${minute} ${hour} 1 * *` // First day of every month at configured time
 }
 
 // Send notifications with bookmarks
@@ -84,8 +107,13 @@ export function startScheduler() {
     `Scheduler started with ${config.NOTIFICATION_FREQUENCY} frequency (${cronExpression})`
   )
 
-  // Schedule the job using node-cron
-  cron.schedule(cronExpression, sendNotification)
+  // Schedule the job using node-cron with timezone
+  cron.schedule(cronExpression, sendNotification, {
+    timezone: config.TIMEZONE
+  })
+  
+  console.log(`Using timezone: ${config.TIMEZONE}`)
+  console.log(`Scheduled to run at: ${config.TIME_TO_SEND} (${hour}:${minute})`)
 }
 
 // Trigger an immediate send (for testing)

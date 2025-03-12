@@ -71,6 +71,7 @@ Edit the `.env` file with your configuration:
 - Set your Hoarder Server URL
 - Choose notification method (email or discord)
 - Set frequency (daily, weekly, monthly)
+- Configure your timezone and preferred time for notifications
 - Configure notification-specific settings
 
 > If you need to change the server port mapping from `8080`, you can do that in the `docker-compose.yml` file.
@@ -132,6 +133,27 @@ To test the Discord functionality with a sample bookmark:
 ```bash
 curl http://localhost:8080/test-discord
 ```
+
+## Scheduling Configuration
+
+### Timezone and Time Settings
+
+By default, notifications are sent at 9:00 AM UTC. You can customize both the time and timezone:
+
+```
+# In your .env file
+TIMEZONE=America/New_York  # Your local timezone
+TIME_TO_SEND=09:00  # Time in 24-hour format (HH:MM)
+```
+
+#### Available Options:
+
+- **TIMEZONE**: Any valid IANA timezone name (e.g., `America/New_York`, `Europe/London`, `Asia/Tokyo`)
+- **TIME_TO_SEND**: Time in 24-hour format (HH:MM), such as `09:00` for 9 AM or `21:30` for 9:30 PM
+
+These settings apply to all notification frequencies (daily, weekly, monthly). For example:
+- With `NOTIFICATION_FREQUENCY=daily` and `TIME_TO_SEND=21:30`, you'll receive notifications every day at 9:30 PM
+- With `NOTIFICATION_FREQUENCY=weekly` and `TIME_TO_SEND=18:00`, you'll receive notifications every Monday at 6:00 PM
 
 ## Troubleshooting
 

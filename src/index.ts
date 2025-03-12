@@ -11,6 +11,8 @@ app.get('/', c => {
     notification_method: config.NOTIFICATION_METHOD,
     frequency: config.NOTIFICATION_FREQUENCY,
     count: config.BOOKMARKS_COUNT,
+    timezone: config.TIMEZONE,
+    time_to_send: config.TIME_TO_SEND,
     specific_list: config.SPECIFIC_LIST_ID ? true : false
   })
 })

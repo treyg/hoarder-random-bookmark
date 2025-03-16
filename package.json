@@ -23,6 +23,7 @@
     "@hoarderapp/sdk": "^0.22.0",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
+    "feed": "^4.2.2",
     "hono": "^4.7.4",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",

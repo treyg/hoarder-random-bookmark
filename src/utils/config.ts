@@ -10,7 +10,7 @@ const ConfigSchema = z.object({
   HOARDER_SERVER_URL: z.string().default('https://api.hoarder.app'),
 
   // Notification settings
-  NOTIFICATION_METHOD: z.enum(['email', 'discord']),
+  NOTIFICATION_METHOD: z.enum(['email', 'discord', 'rss']),
   NOTIFICATION_FREQUENCY: z.enum(['daily', 'weekly', 'monthly']),
   BOOKMARKS_COUNT: z.coerce.number().int().positive(),
   SPECIFIC_LIST_ID: z.string().optional(),

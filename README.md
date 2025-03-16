@@ -1,12 +1,12 @@
 # Hoarder Random Bookmark
 
-This application sends random bookmarks from your Hoarder account to your email or Discord at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
+This application sends random bookmarks from your Hoarder account to your email, Discord, or RSS feed at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
 Send from a specific list or all bookmarks, daily, weekly, or monthly.
 
 ## Features
 
 - Sends random bookmarks on a daily, weekly, or monthly schedule
-- Supports both email and Discord notifications
+- Supports email, Discord, and RSS feed notifications
 - Configurable number of bookmarks to send
 - Option to select bookmarks from all lists or a specific list
 - Self-host with Docker
@@ -125,6 +125,16 @@ curl http://localhost:8080/test-email
 ```
 
 This will send a test email with a sample bookmark to your configured email recipient.
+
+### Testing RSS Feed
+
+To access your RSS feed (when configured):
+
+```bash
+curl http://localhost:8080/rss/feed
+```
+
+Or simply open `http://localhost:8080/rss/feed` in your browser or RSS reader. The feed will update according to your configured schedule (daily, weekly, or monthly).
 
 ### Testing Discord Specifically
 

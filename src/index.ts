@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import { config } from './utils/config'
 import { startScheduler, sendImmediate } from './services/scheduler'
 import { initDiscordClient, sendBookmarksDiscord } from './services/discord'
+import { getRandomBookmarks } from './api/hoarder'
+import { generateBookmarksRSS } from './services/rss'
 
 const app = new Hono()
 
@@ -13,7 +15,8 @@ app.get('/', c => {
     count: config.BOOKMARKS_COUNT,
     timezone: config.TIMEZONE,
     time_to_send: config.TIME_TO_SEND,
-    specific_list: config.SPECIFIC_LIST_ID ? true : false
+    specific_list: config.SPECIFIC_LIST_ID ? true : false,
+    rss_feed_url: config.NOTIFICATION_METHOD === 'rss' ? 'http://localhost:8080/rss/feed' : null
   })
 })
 
@@ -78,6 +81,33 @@ app.get('/test-email', async c => {
   }
 })
 
+// RSS feed endpoint
+app.get('/rss/feed', async c => {
+  try {
+    // Get random bookmarks based on configuration
+    const bookmarks = await getRandomBookmarks(
+      config.BOOKMARKS_COUNT,
+      config.SPECIFIC_LIST_ID
+    )
+
+    // Generate RSS feed
+    const rssContent = await generateBookmarksRSS(bookmarks)
+
+    // Set content type to XML
+    c.header('Content-Type', 'application/rss+xml')
+    return c.body(rssContent)
+  } catch (error: any) {
+    console.error('Error generating RSS feed:', error)
+    return c.json(
+      {
+        success: false,
+        error: `Failed to generate RSS feed: ${error.message || 'Unknown error'}`
+      },
+      500
+    )
+  }
+})
+
 // Add endpoint to test Discord bot directly
 app.get('/test-discord', async c => {
   try {
@@ -131,6 +161,9 @@ async function initApp() {
   // Initialize Discord client if using Discord
   if (config.NOTIFICATION_METHOD === 'discord') {
     await initDiscordClient()
+  } else if (config.NOTIFICATION_METHOD === 'rss') {
+    console.log('RSS feed is ready!')
+    console.log('Feed URL: http://localhost:8080/rss/feed')
   }
 
   // Start the scheduler

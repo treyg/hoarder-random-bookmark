@@ -1,89 +1,78 @@
 import { config } from '../utils/config'
+import { createHoarderClient } from '@hoarderapp/sdk'
+import type { Bookmark, List, SdkBookmark, SdkList } from './types'
 
-// Define interfaces based on Hoarder API
-interface Bookmark {
-  id: string
-  url: string
-  title: string
-  description: string
-  tags: string[]
-  created_at: string
-  updated_at: string
+const client = createHoarderClient({
+  baseUrl: `${config.HOARDER_SERVER_URL}/api/v1`,
+  headers: {
+    'Content-Type': 'application/json',
+    authorization: `Bearer ${config.HOARDER_API_KEY}`
+  }
+})
+
+// Helper function to transform SDK bookmark to our simplified Bookmark type
+function transformBookmark(bookmark: SdkBookmark): Bookmark {
+  const content = bookmark.content || {}
+
+  let url = ''
+  if (content && 'url' in content) {
+    url = content.url || ''
+  }
+
+  const title =
+    (content && 'title' in content ? content.title : null) ||
+    bookmark.title ||
+    'Untitled Bookmark'
+
+  const description =
+    (content && 'description' in content ? content.description : null) ||
+    bookmark.summary ||
+    bookmark.note ||
+    ''
+
+  const tags = bookmark.tags
+    ? bookmark.tags.map((tag: { name: string }) => tag.name)
+    : []
+
+  return {
+    id: bookmark.id,
+    url,
+    title,
+    description,
+    tags,
+    created_at: bookmark.createdAt,
+    updated_at: bookmark.modifiedAt || ''
+  }
 }
 
-interface List {
-  id: string
-  name: string
-  description: string
-  created_at: string
-  updated_at: string
+// Helper function to transform SDK list to a simplified List type
+function transformList(list: SdkList): List {
+  return {
+    id: list.id,
+    name: list.name,
+    description: list.description || '',
+    created_at: list.createdAt,
+    updated_at: list.modifiedAt || ''
+  }
 }
 
-// API base URL and headers
-const API_BASE = config.HOARDER_SERVER_URL
-const headers = {
-  Authorization: `Bearer ${config.HOARDER_API_KEY}`,
-  'Content-Type': 'application/json'
-}
-
-// Helper function to construct API paths
-function constructApiPath(path: string): string {
-  const baseUrl = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE
-  const apiPath = path.startsWith('/') ? path : `/${path}`
-
-  return `${baseUrl}${apiPath}`
-}
-
-// Get all bookmarks
 export async function getAllBookmarks(): Promise<Bookmark[]> {
   try {
-    const fullPath = constructApiPath('/api/v1/bookmarks')
-    console.log(`Fetching bookmarks from: ${fullPath}`)
-    const response = await fetch(fullPath, { headers })
+    const path = '/bookmarks' as any
+    const result = await client.GET(path, { params: {} })
+    const { data, error } = result
+    if (error) throw error
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch bookmarks: ${response.status}`)
+    let sdkBookmarks: SdkBookmark[] = []
+    if (Array.isArray(data)) {
+      sdkBookmarks = data as SdkBookmark[]
+    } else if (data && 'bookmarks' in data && Array.isArray(data.bookmarks)) {
+      sdkBookmarks = data.bookmarks as SdkBookmark[]
+    } else if (data) {
+      sdkBookmarks = [data as SdkBookmark]
     }
 
-    const data = await response.json()
-    console.log(`Successfully fetched bookmarks from: ${fullPath}`)
-
-    // Check if the response has a bookmarks array as per v1 API
-    if (data.bookmarks && Array.isArray(data.bookmarks)) {
-      return data.bookmarks.map((bookmark: any) => {
-        const content = bookmark.content || {}
-
-        return {
-          id: bookmark.id || '',
-          url: content.url || bookmark.url || bookmark.link || '',
-          title:
-            content.title ||
-            bookmark.title ||
-            bookmark.name ||
-            'Untitled Bookmark',
-          description:
-            content.description ||
-            bookmark.summary ||
-            bookmark.description ||
-            bookmark.note ||
-            '',
-          tags: bookmark.tags
-            ? bookmark.tags.map((tag: any) =>
-                typeof tag === 'string' ? tag : tag.name || ''
-              )
-            : [],
-          created_at: bookmark.createdAt || bookmark.created_at || '',
-          updated_at: bookmark.modifiedAt || bookmark.updated_at || ''
-        }
-      })
-    }
-
-    if (data.data && Array.isArray(data.data)) {
-      return data.data
-    }
-
-    console.log('Unexpected API response format:', data)
-    return []
+    return sdkBookmarks.map(transformBookmark)
   } catch (error) {
     console.error('Error fetching bookmarks:', error)
     throw error
@@ -93,33 +82,23 @@ export async function getAllBookmarks(): Promise<Bookmark[]> {
 // Get all lists
 export async function getAllLists(): Promise<List[]> {
   try {
-    const fullPath = constructApiPath('/api/v1/lists')
-    console.log(`Fetching lists from: ${fullPath}`)
-    const response = await fetch(fullPath, { headers })
+    // Use type assertion to bypass TypeScript path checking
+    const path = '/lists' as any
+    const result = await client.GET(path, { params: {} })
+    const { data, error } = result
+    if (error) throw error
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch lists: ${response.status}`)
+    // The API returns lists directly or in a lists array
+    let sdkLists: SdkList[] = []
+    if (Array.isArray(data)) {
+      sdkLists = data as SdkList[]
+    } else if (data && 'lists' in data && Array.isArray(data.lists)) {
+      sdkLists = data.lists as SdkList[]
+    } else if (data) {
+      sdkLists = [data as SdkList]
     }
 
-    const data = await response.json()
-    console.log(`Successfully fetched lists from: ${fullPath}`)
-
-    if (data.lists && Array.isArray(data.lists)) {
-      return data.lists.map((list: any) => ({
-        id: list.id,
-        name: list.name || '',
-        description: list.description || '',
-        created_at: list.createdAt || '',
-        updated_at: list.modifiedAt || ''
-      }))
-    }
-
-    if (data.data && Array.isArray(data.data)) {
-      return data.data
-    }
-
-    console.log('Unexpected API response format:', data)
-    return []
+    return sdkLists.map(transformList)
   } catch (error) {
     console.error('Error fetching lists:', error)
     throw error
@@ -129,33 +108,14 @@ export async function getAllLists(): Promise<List[]> {
 // Get a single list by ID
 export async function getList(listId: string): Promise<List> {
   try {
-    const fullPath = constructApiPath(`/api/v1/lists/${listId}`)
-    console.log(`Fetching list from: ${fullPath}`)
-    const response = await fetch(fullPath, { headers })
+    // Use type assertion to bypass TypeScript path checking
+    const path = `/lists/${listId}` as any
+    const result = await client.GET(path, { params: {} })
+    const { data, error } = result
+    if (error) throw error
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch list: ${response.status}`)
-    }
-
-    const data = await response.json()
-    console.log(`Successfully fetched list from: ${fullPath}`)
-
-    if (data.list) {
-      return {
-        id: data.list.id,
-        name: data.list.name || '',
-        description: data.list.description || '',
-        created_at: data.list.createdAt || '',
-        updated_at: data.list.modifiedAt || ''
-      }
-    }
-
-    if (data.data) {
-      return data.data
-    }
-
-    console.log('Unexpected API response format:', data)
-    throw new Error('Unexpected API response format')
+    if (!data) throw new Error('List not found')
+    return transformList(data as SdkList)
   } catch (error) {
     console.error('Error fetching list:', error)
     throw error
@@ -165,52 +125,23 @@ export async function getList(listId: string): Promise<List> {
 // Get bookmarks in a specific list
 export async function getBookmarksInList(listId: string): Promise<Bookmark[]> {
   try {
-    const fullPath = constructApiPath(`/api/v1/lists/${listId}/bookmarks`)
-    console.log(`Fetching bookmarks in list from: ${fullPath}`)
-    const response = await fetch(fullPath, { headers })
+    // Use type assertion to bypass TypeScript path checking
+    const path = `/lists/${listId}/bookmarks` as any
+    const result = await client.GET(path, { params: {} })
+    const { data, error } = result
+    if (error) throw error
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch bookmarks in list: ${response.status}`)
+    // The API returns bookmarks directly or in a bookmarks array
+    let sdkBookmarks: SdkBookmark[] = []
+    if (Array.isArray(data)) {
+      sdkBookmarks = data as SdkBookmark[]
+    } else if (data && 'bookmarks' in data && Array.isArray(data.bookmarks)) {
+      sdkBookmarks = data.bookmarks as SdkBookmark[]
+    } else if (data) {
+      sdkBookmarks = [data as SdkBookmark]
     }
 
-    const data = await response.json()
-    console.log(`Successfully fetched bookmarks in list from: ${fullPath}`)
-
-    if (data.bookmarks && Array.isArray(data.bookmarks)) {
-      return data.bookmarks.map((bookmark: any) => {
-        const content = bookmark.content || {}
-
-        return {
-          id: bookmark.id || '',
-          url: content.url || bookmark.url || bookmark.link || '',
-          title:
-            content.title ||
-            bookmark.title ||
-            bookmark.name ||
-            'Untitled Bookmark',
-          description:
-            content.description ||
-            bookmark.summary ||
-            bookmark.description ||
-            bookmark.note ||
-            '',
-          tags: bookmark.tags
-            ? bookmark.tags.map((tag: any) =>
-                typeof tag === 'string' ? tag : tag.name || ''
-              )
-            : [],
-          created_at: bookmark.createdAt || bookmark.created_at || '',
-          updated_at: bookmark.modifiedAt || bookmark.updated_at || ''
-        }
-      })
-    }
-
-    if (data.data && Array.isArray(data.data)) {
-      return data.data
-    }
-
-    console.log('Unexpected API response format:', data)
-    return []
+    return sdkBookmarks.map(transformBookmark)
   } catch (error) {
     console.error('Error fetching bookmarks in list:', error)
     throw error
@@ -223,22 +154,20 @@ export async function getRandomBookmarks(
   listId?: string
 ): Promise<Bookmark[]> {
   try {
-    const allBookmarks = listId
+    const bookmarks = listId
       ? await getBookmarksInList(listId)
       : await getAllBookmarks()
 
-    if (!allBookmarks.length) {
-      console.log('No bookmarks found')
-      return []
+    // Shuffle the array using Fisher-Yates algorithm
+    for (let i = bookmarks.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[bookmarks[i], bookmarks[j]] = [bookmarks[j], bookmarks[i]]
     }
 
-    // Shuffle and take requested number of bookmarks
-    const shuffled = [...allBookmarks].sort(() => 0.5 - Math.random())
-    return shuffled.slice(0, count)
+    // Return the requested number of bookmarks
+    return bookmarks.slice(0, count)
   } catch (error) {
     console.error('Error getting random bookmarks:', error)
     throw error
   }
 }
-
-export type { Bookmark, List }

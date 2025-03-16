@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits, TextChannel } from 'discord.js'
 import { config } from '../utils/config'
-import type { Bookmark } from '../api/hoarder'
+import type { Bookmark } from '../api/types'
 
 // Create Discord client
 const client = new Client({
@@ -46,7 +46,7 @@ export function formatDiscordMessage(bookmarks: Bookmark[]): string {
       message += '\n'
     }
 
-    message += '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n'
+    message += '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\n'
   })
 
   return message

@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 import { config } from '../utils/config'
-import type { Bookmark } from '../api/hoarder'
+import type { Bookmark } from '../api/types'
 
 // Create transporter object for sending emails
 const transporter = nodemailer.createTransport({

@@ -20,6 +20,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@hoarderapp/sdk": "^0.22.0",
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "hono": "^4.7.4",

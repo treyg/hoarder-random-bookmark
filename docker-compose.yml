@@ -1,12 +1,13 @@
-version: '3.8'
+version: "3.8"
 
 services:
   hoarder-bookmark-sender:
-    build: .
+    # build: .
+    image: localhost/hoarder-bookmark-sender:latest
     container_name: hoarder-bookmark-sender
     restart: unless-stopped
     ports:
-      - '8080:8080'
+      - "8080:8080"
     environment:
       - NODE_ENV=production
       - PORT=8080
@@ -29,3 +30,5 @@ services:
       # Discord configuration
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
       - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
+      # Mattermost configuration
+      - MATTERMOST_WEBHOOK_URL=${MATTERMOST_WEBHOOK_URL}

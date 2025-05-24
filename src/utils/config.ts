@@ -10,7 +10,7 @@ const ConfigSchema = z.object({
   HOARDER_SERVER_URL: z.string().default('https://api.hoarder.app'),
 
   // Notification settings
-  NOTIFICATION_METHOD: z.enum(['email', 'discord', 'rss']),
+  NOTIFICATION_METHOD: z.enum(['email', 'discord', 'mattermost', 'rss']),
   NOTIFICATION_FREQUENCY: z.enum(['daily', 'weekly', 'monthly']),
   BOOKMARKS_COUNT: z.coerce.number().int().positive(),
   SPECIFIC_LIST_ID: z.string().optional(),
@@ -25,7 +25,10 @@ const ConfigSchema = z.object({
 
   // Discord configuration
   DISCORD_BOT_TOKEN: z.string().optional(),
-  DISCORD_CHANNEL_ID: z.string().optional()
+  DISCORD_CHANNEL_ID: z.string().optional(),
+
+  // Mattermost configuration
+  MATTERMOST_WEBHOOK_URL: z.string().optional()
 })
 
 // Create config object and validate based on notification method
@@ -46,6 +49,10 @@ function validateConfig() {
     } else if (config.NOTIFICATION_METHOD === 'discord') {
       if (!config.DISCORD_BOT_TOKEN || !config.DISCORD_CHANNEL_ID) {
         throw new Error('Discord configuration is incomplete')
+      }
+    } else if (config.NOTIFICATION_METHOD === 'mattermost') {
+      if (!config.MATTERMOST_WEBHOOK_URL) {
+        throw new Error('Mattermost webhook URL is required for Mattermost notifications')
       }
     }
 

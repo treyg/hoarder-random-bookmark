@@ -1,12 +1,12 @@
 # Hoarder Random Bookmark
 
-This application sends random bookmarks from your Hoarder account to your email, Discord, or RSS feed at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
+This application sends random bookmarks from your Hoarder account to your email, Discord, Mattermost, or RSS feed at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
 Send from a specific list or all bookmarks, daily, weekly, or monthly.
 
 ## Features
 
 - Sends random bookmarks on a daily, weekly, or monthly schedule
-- Supports email, Discord, and RSS feed notifications
+- Supports email, Discord, Mattermost, and RSS feed notifications
 - Configurable number of bookmarks to send
 - Option to select bookmarks from all lists or a specific list
 - Self-host with Docker
@@ -267,7 +267,7 @@ Common reasons why the channel field is ignored:
 
 - The webhook integration user does not have permission to post in the target channel.
 - The webhook was not created by a system admin.
-- The channel name is not correct (should be the channel’s name without the #, or the channel’s ID).
+- The channel name is not correct (should be the channel’s name without the #).
 - The webhook is restricted to a specific channel in its Mattermost configuration.
 
 For more information on incoming webhooks, see the [Mattermost documentation](https://developers.mattermost.com/integrate/webhooks/incoming/).

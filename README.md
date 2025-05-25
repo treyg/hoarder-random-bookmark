@@ -1,6 +1,6 @@
-# Hoarder Random Bookmark
+# Karakeep Random Bookmark
 
-This application sends random bookmarks from your Hoarder account to your email, Discord, Mattermost, or RSS feed at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
+This application sends random bookmarks from your Karakeep (formerly Hoarder) account to your email, Discord, Mattermost, or RSS feed at scheduled intervals. This is a way to remember and discover all the bookmarks you've saved.
 Send from a specific list or all bookmarks, daily, weekly, or monthly.
 
 ## Features
@@ -13,11 +13,11 @@ Send from a specific list or all bookmarks, daily, weekly, or monthly.
 
 ## Getting Started
 
-### Obtaining a Hoarder API Key
+### Obtaining a Karakeep API Key
 
-To use this application, you'll need an API key from your Hoarder account:
+To use this application, you'll need an API key from your Karakeep account:
 
-1. Log in to your Hoarder account and go to settings
+1. Log in to your Karakeep account and go to settings
 2. Click 'Api keys'
 3. Create a new key and copy it
 4. This is your `HOARDER_API_KEY` for the application

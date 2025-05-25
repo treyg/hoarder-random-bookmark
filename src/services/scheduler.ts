@@ -22,7 +22,7 @@ function timeToCron(timeString: string): { minute: string; hour: string } {
 
   return {
     minute: match[2],
-    hour: match[1].padStart(2, "0")
+    hour: match[1].padStart(2, '0')
   }
 }
 
@@ -39,12 +39,12 @@ const cronExpressions = {
 // Send notifications with bookmarks
 async function sendNotification() {
   try {
-    console.log("=== STARTING BOOKMARK NOTIFICATION PROCESS ===")
-    console.log("Preparing to send bookmarks notification...")
+    console.log('=== STARTING BOOKMARK NOTIFICATION PROCESS ===')
+    console.log('Preparing to send bookmarks notification...')
     console.log(`Using notification method: ${config.NOTIFICATION_METHOD}`)
     console.log(
       `Requesting ${config.BOOKMARKS_COUNT} random bookmarks${
-        config.SPECIFIC_LIST_ID ? ` from list ${config.SPECIFIC_LIST_ID}` : ""
+        config.SPECIFIC_LIST_ID ? ` from list ${config.SPECIFIC_LIST_ID}` : ''
       }`
     )
 
@@ -57,7 +57,7 @@ async function sendNotification() {
     console.log(`Retrieved ${bookmarks.length} bookmarks`)
 
     if (bookmarks.length === 0) {
-      console.log("No bookmarks available to send")
+      console.log('No bookmarks available to send')
       return
     }
 
@@ -85,7 +85,7 @@ async function sendNotification() {
       console.log('Updating RSS feed with new bookmarks...')
       await generateBookmarksRSS(bookmarks)
       console.log(
-        "RSS feed updated successfully - available at http://localhost:8080/rss/feed"
+        'RSS feed updated successfully - available at http://localhost:8080/rss/feed'
       )
     }
 

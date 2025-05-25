@@ -162,6 +162,7 @@ TIME_TO_SEND=09:00  # Time in 24-hour format (HH:MM)
 - **TIME_TO_SEND**: Time in 24-hour format (HH:MM), such as `09:00` for 9 AM or `21:30` for 9:30 PM
 
 These settings apply to all notification frequencies (daily, weekly, monthly). For example:
+
 - With `NOTIFICATION_FREQUENCY=daily` and `TIME_TO_SEND=21:30`, you'll receive notifications every day at 9:30 PM
 - With `NOTIFICATION_FREQUENCY=weekly` and `TIME_TO_SEND=18:00`, you'll receive notifications every Monday at 6:00 PM
 
@@ -259,3 +260,14 @@ Ensure your bot:
    - Read Message History
    - View Channels
 5. If messages aren't being sent, check if your bot has permission conflicts with channel-specific permissions or role hierarchy issues
+
+### Mattermost Troubleshooting
+
+Common reasons why the channel field is ignored:
+
+- The webhook integration user does not have permission to post in the target channel.
+- The webhook was not created by a system admin.
+- The channel name is not correct (should be the channel’s name without the #, or the channel’s ID).
+- The webhook is restricted to a specific channel in its Mattermost configuration.
+
+For more information on incoming webhooks, see the [Mattermost documentation](https://developers.mattermost.com/integrate/webhooks/incoming/).

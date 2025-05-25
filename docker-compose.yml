@@ -29,3 +29,6 @@ services:
       # Discord configuration
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
       - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
+      # Mattermost configuration
+      - MATTERMOST_WEBHOOK_URL=${MATTERMOST_WEBHOOK_URL}
+      - MATTERMOST_CHANNEL=${MATTERMOST_CHANNEL}

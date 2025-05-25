@@ -3,22 +3,23 @@ import { config } from '../utils/config'
 import { getRandomBookmarks } from '../api/hoarder'
 import { sendBookmarksEmail } from './email'
 import { sendBookmarksDiscord } from './discord'
+import { sendBookmarksMattermost } from './mattermost'
 import { generateBookmarksRSS } from './rss'
 
 // Function to convert time string (HH:MM) to cron time format (MM HH)
 function timeToCron(timeString: string): { minute: string; hour: string } {
   // Default to 9:00 AM if format is invalid
   const defaultTime = { minute: '0', hour: '9' }
-  
+
   // Validate time format (HH:MM in 24-hour format)
   const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/
   const match = timeString.match(timeRegex)
-  
+
   if (!match) {
     console.warn(`Invalid time format: ${timeString}, using default 09:00`)
     return defaultTime
   }
-  
+
   return {
     minute: match[2],
     hour: match[1].padStart(2, '0')
@@ -66,7 +67,7 @@ async function sendNotification() {
         id: bookmark.id,
         title: bookmark.title || 'Untitled',
         url: bookmark.url || 'No URL',
-        tags: bookmark.tags || []
+        tags: bookmark.tags || [],
       })
     })
 
@@ -77,10 +78,15 @@ async function sendNotification() {
     } else if (config.NOTIFICATION_METHOD === 'discord') {
       console.log('Sending bookmarks via Discord...')
       await sendBookmarksDiscord(bookmarks)
+    } else if (config.NOTIFICATION_METHOD === 'mattermost') {
+      console.log('Sending bookmarks via Mattermost...')
+      await sendBookmarksMattermost(bookmarks)
     } else if (config.NOTIFICATION_METHOD === 'rss') {
       console.log('Updating RSS feed with new bookmarks...')
       await generateBookmarksRSS(bookmarks)
-      console.log('RSS feed updated successfully - available at http://localhost:8080/rss/feed')
+      console.log(
+        'RSS feed updated successfully - available at http://localhost:8080/rss/feed'
+      )
     }
 
     console.log(
@@ -116,7 +122,7 @@ export function startScheduler() {
   cron.schedule(cronExpression, sendNotification, {
     timezone: config.TIMEZONE
   })
-  
+
   console.log(`Using timezone: ${config.TIMEZONE}`)
   console.log(`Scheduled to run at: ${config.TIME_TO_SEND} (${hour}:${minute})`)
 }

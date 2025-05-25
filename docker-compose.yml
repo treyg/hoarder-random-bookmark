@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   hoarder-bookmark-sender:
@@ -6,7 +6,7 @@ services:
     container_name: hoarder-bookmark-sender
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - NODE_ENV=production
       - PORT=8080

@@ -67,8 +67,8 @@ cp .env.example .env
 
 Edit the `.env` file with your configuration:
 
-- Add your Hoarder API key
-- Set your Hoarder Server URL
+- Add your Karakeep API key
+- Set your Karakeep Server URL
 - Choose notification method (email or discord)
 - Set frequency (daily, weekly, monthly)
 - Configure your timezone and preferred time for notifications

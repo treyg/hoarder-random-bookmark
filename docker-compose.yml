@@ -2,8 +2,7 @@ version: "3.8"
 
 services:
   hoarder-bookmark-sender:
-    # build: .
-    image: localhost/hoarder-bookmark-sender:latest
+    build: .
     container_name: hoarder-bookmark-sender
     restart: unless-stopped
     ports:
@@ -32,3 +31,4 @@ services:
       - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
       # Mattermost configuration
       - MATTERMOST_WEBHOOK_URL=${MATTERMOST_WEBHOOK_URL}
+      - MATTERMOST_CHANNEL=${MATTERMOST_CHANNEL}

@@ -1,18 +1,18 @@
-import axios from "axios";
-import { config } from "../utils/config";
-import type { Bookmark } from "../api/types";
+import axios from 'axios';
+import { config } from '../utils/config';
+import type { Bookmark } from '../api/types';
 
 // Format bookmarks for Mattermost message (Markdown)
 export function formatMattermostMessage(bookmarks: Bookmark[]): string {
-  let message = "#### Your Random Bookmarks from Hoarder\n\n";
+  let message = '#### Your Random Bookmarks from Hoarder\n\n';
   if (bookmarks.length === 0) {
     message +=
-      "No bookmarks found. Please check your Hoarder API configuration.";
+      'No bookmarks found. Please check your Hoarder API configuration.';
     return message;
   }
   bookmarks.forEach((bookmark, index) => {
-    const title = bookmark.title || "Untitled Bookmark";
-    const url = bookmark.url || "";
+    const title = bookmark.title || 'Untitled Bookmark';
+    const url = bookmark.url || '';
     if (url) {
       message += `${index + 1}. [${title}](${url})\n`;
     } else {
@@ -22,11 +22,11 @@ export function formatMattermostMessage(bookmarks: Bookmark[]): string {
       message += `> ${bookmark.description}\n`;
     }
     if (bookmark.tags && bookmark.tags.length > 0) {
-      message += "Tags: ";
-      message += bookmark.tags.map((tag) => `\`${tag}\``).join(", ");
-      message += "\n";
+      message += 'Tags: ';
+      message += bookmark.tags.map((tag) => `\`${tag}\``).join(', ');
+      message += '\n';
     }
-    message += "-----------------------------\n";
+    message += '-----------------------------\n';
   });
   return message;
 }
@@ -37,7 +37,7 @@ export async function sendBookmarksMattermost(
 ): Promise<void> {
   const webhookUrl = config.MATTERMOST_WEBHOOK_URL;
   if (!webhookUrl) {
-    throw new Error("Mattermost webhook URL is not defined in config");
+    throw new Error('Mattermost webhook URL is not defined in config');
   }
   const text = formatMattermostMessage(bookmarks);
   const payload: Record<string, any> = { text };
@@ -46,9 +46,9 @@ export async function sendBookmarksMattermost(
   }
   try {
     await axios.post(webhookUrl, payload);
-    console.log("Successfully sent bookmarks to Mattermost.");
+    console.log('Successfully sent bookmarks to Mattermost.');
   } catch (error: any) {
-    console.error("Error sending Mattermost notification:", error?.message);
+    console.error('Error sending Mattermost notification:', error?.message);
     throw error;
   }
 }

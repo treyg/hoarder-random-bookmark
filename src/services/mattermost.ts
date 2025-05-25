@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { config } from '../utils/config'
 import type { Bookmark } from '../api/types'
 
@@ -45,7 +44,18 @@ export async function sendBookmarksMattermost(
     payload.channel = config.MATTERMOST_CHANNEL
   }
   try {
-    await axios.post(webhookUrl, payload)
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    
     console.log('Successfully sent bookmarks to Mattermost.')
   } catch (error: any) {
     console.error('Error sending Mattermost notification:', error?.message)

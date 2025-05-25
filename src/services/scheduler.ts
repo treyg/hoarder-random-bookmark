@@ -120,7 +120,7 @@ export function startScheduler() {
 
   // Schedule the job using node-cron with timezone
   cron.schedule(cronExpression, sendNotification, {
-    timezone: config.TIMEZONE,
+    timezone: config.TIMEZONE
   })
 
   console.log(`Using timezone: ${config.TIMEZONE}`)

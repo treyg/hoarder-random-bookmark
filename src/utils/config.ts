@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import dotenv from 'dotenv';
+import { z } from 'zod'
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 // Define configuration schema with validation
 const ConfigSchema = z.object({
@@ -38,7 +38,7 @@ const ConfigSchema = z.object({
 // Create config object and validate based on notification method
 function validateConfig() {
   try {
-    const config = ConfigSchema.parse(process.env);
+    const config = ConfigSchema.parse(process.env)
 
     // Additional validation based on notification method
     if (config.NOTIFICATION_METHOD === 'email') {
@@ -48,25 +48,25 @@ function validateConfig() {
         !config.EMAIL_PASS ||
         !config.EMAIL_RECIPIENT
       ) {
-        throw new Error('Email configuration is incomplete');
+        throw new Error('Email configuration is incomplete')
       }
     } else if (config.NOTIFICATION_METHOD === 'discord') {
       if (!config.DISCORD_BOT_TOKEN || !config.DISCORD_CHANNEL_ID) {
-        throw new Error('Discord configuration is incomplete');
+        throw new Error('Discord configuration is incomplete')
       }
     } else if (config.NOTIFICATION_METHOD === 'mattermost') {
       if (!config.MATTERMOST_WEBHOOK_URL) {
         throw new Error(
           'Mattermost webhook URL is required for Mattermost notifications'
-        );
+        )
       }
     }
 
-    return config;
+    return config
   } catch (error) {
-    console.error('Configuration validation failed:', error);
-    process.exit(1);
+    console.error('Configuration validation failed:', error)
+    process.exit(1)
   }
 }
 
-export const config = validateConfig();
+export const config = validateConfig()

@@ -15,10 +15,7 @@ const ConfigSchema = z.object({
   BOOKMARKS_COUNT: z.coerce.number().int().positive(),
   SPECIFIC_LIST_ID: z.string().optional(),
   TIMEZONE: z.string().default('UTC'),
-  TIME_TO_SEND: z
-    .string()
-    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)
-    .default('09:00'),
+  TIME_TO_SEND: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).default('09:00'),
 
   // Email configuration
   EMAIL_SERVICE: z.string().optional(),

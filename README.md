@@ -9,7 +9,7 @@ Send from a specific list or all bookmarks, daily, weekly, or monthly.
 - Supports email, Discord, Mattermost, and RSS feed notifications
 - Configurable number of bookmarks to send
 - Option to select bookmarks from all lists or a specific list
-- **Option to only send unarchived bookmarks** (useful for creating a "to-do list" of active bookmarks)
+- Option to only send unarchived bookmarks (useful for creating a "to-do list" of active bookmarks)
 - Self-host with Docker
 
 ## Getting Started
@@ -72,7 +72,7 @@ Edit the `.env` file with your configuration:
 - Set your Karakeep Server URL
 - Choose notification method (email or discord)
 - Set frequency (daily, weekly, monthly)
-- **Optionally set `ONLY_UNARCHIVED=true` to filter out archived bookmarks**
+- Set unarchived to true to ignore archived bookmarks
 - Configure your timezone and preferred time for notifications
 - Configure notification-specific settings
 

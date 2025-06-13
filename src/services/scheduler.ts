@@ -4,6 +4,7 @@ import { getRandomBookmarks } from '../api/hoarder'
 import { sendBookmarksEmail } from './email'
 import { sendBookmarksDiscord } from './discord'
 import { sendBookmarksMattermost } from './mattermost'
+import { sendBookmarksTelegram } from './telegram'
 import { generateBookmarksRSS } from './rss'
 
 // Function to convert time string (HH:MM) to cron time format (MM HH)
@@ -81,6 +82,9 @@ async function sendNotification() {
     } else if (config.NOTIFICATION_METHOD === 'mattermost') {
       console.log('Sending bookmarks via Mattermost...')
       await sendBookmarksMattermost(bookmarks)
+    } else if (config.NOTIFICATION_METHOD === 'telegram') {
+      console.log('Sending bookmarks via Telegram...')
+      await sendBookmarksTelegram(bookmarks)
     } else if (config.NOTIFICATION_METHOD === 'rss') {
       console.log('Updating RSS feed with new bookmarks...')
       await generateBookmarksRSS(bookmarks)

@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { config } from './utils/config'
 import { startScheduler, sendImmediate } from './services/scheduler'
 import { initDiscordClient, sendBookmarksDiscord } from './services/discord'
+import { sendBookmarksTelegram } from './services/telegram'
 import { getRandomBookmarks } from './api/hoarder'
 import { generateBookmarksRSS } from './services/rss'
 
@@ -142,6 +143,52 @@ app.get('/test-discord', async c => {
     })
   } catch (error: any) {
     console.error('Error sending test Discord message:', error)
+    return c.json(
+      {
+        success: false,
+        error: `Failed to send test message: ${
+          error.message || 'Unknown error'
+        }`
+      },
+      500
+    )
+  }
+})
+
+// Add endpoint to test Telegram bot directly
+app.get('/test-telegram', async c => {
+  try {
+    if (config.NOTIFICATION_METHOD !== 'telegram') {
+      return c.json(
+        {
+          success: false,
+          error: 'Telegram is not configured as the notification method'
+        },
+        400
+      )
+    }
+
+    // Create a test bookmark
+    const testBookmark = {
+      id: 'test-id',
+      url: 'https://example.com',
+      title: 'Test Telegram Bookmark',
+      description: 'This is a test bookmark to verify Telegram integration',
+      tags: ['test', 'telegram'],
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
+    // Send test message
+    await sendBookmarksTelegram([testBookmark])
+
+    return c.json({
+      success: true,
+      message: 'Test message sent to Telegram',
+      chat_id: config.TELEGRAM_CHAT_ID
+    })
+  } catch (error: any) {
+    console.error('Error sending test Telegram message:', error)
     return c.json(
       {
         success: false,

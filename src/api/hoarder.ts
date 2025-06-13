@@ -72,6 +72,11 @@ export async function getAllBookmarks(): Promise<Bookmark[]> {
       sdkBookmarks = [data as SdkBookmark]
     }
 
+    // Filter out archived bookmarks if ONLY_UNARCHIVED is enabled
+    if (config.ONLY_UNARCHIVED) {
+      sdkBookmarks = sdkBookmarks.filter(bookmark => !bookmark.archived)
+    }
+
     return sdkBookmarks.map(transformBookmark)
   } catch (error) {
     console.error('Error fetching bookmarks:', error)
@@ -139,6 +144,11 @@ export async function getBookmarksInList(listId: string): Promise<Bookmark[]> {
       sdkBookmarks = data.bookmarks as SdkBookmark[]
     } else if (data) {
       sdkBookmarks = [data as SdkBookmark]
+    }
+
+    // Filter out archived bookmarks if ONLY_UNARCHIVED is enabled
+    if (config.ONLY_UNARCHIVED) {
+      sdkBookmarks = sdkBookmarks.filter(bookmark => !bookmark.archived)
     }
 
     return sdkBookmarks.map(transformBookmark)

@@ -6,7 +6,7 @@ Send from a specific list or all bookmarks, daily, weekly, or monthly.
 ## Features
 
 - Sends random bookmarks on a daily, weekly, or monthly schedule
-- Supports email, Discord, Mattermost, and RSS feed notifications
+- Supports email, Discord, Mattermost, Telegram, and RSS feed notifications
 - Configurable number of bookmarks to send
 - Option to select bookmarks from all lists or a specific list
 - Option to only send unarchived bookmarks (useful for creating a "to-do list" of active bookmarks)
@@ -70,7 +70,7 @@ Edit the `.env` file with your configuration:
 
 - Add your Karakeep API key
 - Set your Karakeep Server URL
-- Choose notification method (email or discord)
+- Choose notification method (email, discord, mattermost, telegram, or rss)
 - Set frequency (daily, weekly, monthly)
 - Set unarchived to true to ignore archived bookmarks
 - Configure your timezone and preferred time for notifications
@@ -118,7 +118,7 @@ To trigger an immediate send for testing:
 curl -X POST http://localhost:8080/send-now
 ```
 
-### Testing Email Specifically
+### Testing Email
 
 To test the email functionality with a sample bookmark:
 
@@ -138,12 +138,20 @@ curl http://localhost:8080/rss/feed
 
 Or simply open `http://localhost:8080/rss/feed` in your browser or RSS reader. The feed will update according to your configured schedule (daily, weekly, or monthly).
 
-### Testing Discord Specifically
+### Testing Discord
 
 To test the Discord functionality with a sample bookmark:
 
 ```bash
 curl http://localhost:8080/test-discord
+```
+
+### Testing Telegram
+
+To test the Telegram functionality with a sample bookmark:
+
+```bash
+curl http://localhost:8080/test-telegram
 ```
 
 ## Scheduling Configuration
@@ -167,8 +175,6 @@ These settings apply to all notification frequencies (daily, weekly, monthly). F
 
 - With `NOTIFICATION_FREQUENCY=daily` and `TIME_TO_SEND=21:30`, you'll receive notifications every day at 9:30 PM
 - With `NOTIFICATION_FREQUENCY=weekly` and `TIME_TO_SEND=18:00`, you'll receive notifications every Monday at 6:00 PM
-
-## Troubleshooting
 
 ### Email Notifications
 
@@ -273,3 +279,62 @@ Common reasons why the channel field is ignored:
 - The webhook is restricted to a specific channel in its Mattermost configuration.
 
 For more information on incoming webhooks, see the [Mattermost documentation](https://developers.mattermost.com/integrate/webhooks/incoming/).
+
+### Telegram Notifications
+
+#### Getting a Telegram Bot Token:
+
+1.  **Create a Bot**:
+
+    - Open Telegram and search for "@BotFather"
+    - Start a conversation and send `/newbot`
+    - Follow the prompts to create your bot:
+      - Choose a name for your bot (e.g., "Karakeep Random Bookmark")
+      - Choose a username ending in "bot" (e.g., "karakeep_random_bot")
+    - BotFather will provide you with a bot token - this is your `TELEGRAM_BOT_TOKEN`
+    - Save this token somewhere secure
+
+2.  **Get Your Chat ID**:
+
+    - Start a conversation with your new bot
+    - Send any message to the bot (e.g., "/start" or "hello")
+    - Open your browser and go to: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
+    - Replace `<YOUR_BOT_TOKEN>` with the actual token from BotFather
+    - In the response, look for the `chat` object and find the `id` field - this is your `TELEGRAM_CHAT_ID`
+    - The chat ID will be a number (positive for individual chats, negative for groups)
+
+    ##### Alternative method - use @userinfobot
+
+    1. Search for "@userinfobot" in Telegram
+    2. Start a conversation and send any message
+    3. It will reply with your user ID - this is your TELEGRAM_CHAT_ID
+
+#### Telegram Troubleshooting:
+
+**Common Issues:**
+
+1. **"Unauthorized" Error**:
+
+   - Check that your bot token is correct
+   - Make sure you copied the full token from BotFather
+
+2. **"Chat not found" Error**:
+
+   - Verify your chat ID is correct
+   - Make sure you've sent at least one message to the bot first. Just running `/start` didn't work for me the first time
+   - For group chats (not tested), the bot must be added to the group
+
+3. **Bot doesn't respond**:
+
+   - Ensure you've started a conversation with the bot
+   - Check that the bot hasn't been blocked
+
+4. **Messages not formatted correctly**:
+   - The bot uses Telegram's MarkdownV2 formatting
+   - Special characters are automatically escaped for proper display
+
+**Group Chat Setup (not tested but it should work the same):**
+
+- To use with a group chat, add your bot to the group
+- Send a message in the group, then use the getUpdates URL to find the group's chat ID (will be negative)
+- Use this negative number as your `TELEGRAM_CHAT_ID`

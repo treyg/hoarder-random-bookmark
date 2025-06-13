@@ -10,7 +10,7 @@ const ConfigSchema = z.object({
   HOARDER_SERVER_URL: z.string().default('https://api.hoarder.app'),
 
   // Notification settings
-  NOTIFICATION_METHOD: z.enum(['email', 'discord', 'mattermost', 'rss']),
+  NOTIFICATION_METHOD: z.enum(['email', 'discord', 'mattermost', 'rss', 'telegram']),
   NOTIFICATION_FREQUENCY: z.enum(['daily', 'weekly', 'monthly']),
   BOOKMARKS_COUNT: z.coerce.number().int().positive(),
   SPECIFIC_LIST_ID: z.string().optional(),
@@ -31,6 +31,10 @@ const ConfigSchema = z.object({
   // Mattermost configuration
   MATTERMOST_WEBHOOK_URL: z.string().optional(),
   MATTERMOST_CHANNEL: z.string().optional(),
+
+  // Telegram configuration
+  TELEGRAM_BOT_TOKEN: z.string().optional(),
+  TELEGRAM_CHAT_ID: z.string().optional(),
 });
 
 // Create config object and validate based on notification method
@@ -57,6 +61,10 @@ function validateConfig() {
         throw new Error(
           'Mattermost webhook URL is required for Mattermost notifications'
         )
+      }
+    } else if (config.NOTIFICATION_METHOD === 'telegram') {
+      if (!config.TELEGRAM_BOT_TOKEN || !config.TELEGRAM_CHAT_ID) {
+        throw new Error('Telegram configuration is incomplete')
       }
     }
 

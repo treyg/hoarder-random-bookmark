@@ -14,6 +14,7 @@ const ConfigSchema = z.object({
   NOTIFICATION_FREQUENCY: z.enum(['daily', 'weekly', 'monthly']),
   BOOKMARKS_COUNT: z.coerce.number().int().positive(),
   SPECIFIC_LIST_ID: z.string().optional(),
+  ONLY_UNARCHIVED: z.coerce.boolean().default(false),
   TIMEZONE: z.string().default('UTC'),
   TIME_TO_SEND: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).default('09:00'),
 
